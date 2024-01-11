@@ -1,6 +1,6 @@
 variables:
   DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_TLS_CERTDIR: '/certs'
 
 stages:
   - test
@@ -10,7 +10,7 @@ test:
     - main
     - master
   before_script:
-    - cd ITB2203Application/
+    - cd It_disain/
     - dotnet restore
   script:
     - nohup dotnet run &

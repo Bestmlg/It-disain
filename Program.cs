@@ -1,4 +1,4 @@
-using ITB2203Application.Model;
+using It_disain.Model;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

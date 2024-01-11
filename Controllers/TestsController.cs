@@ -1,8 +1,8 @@
-using ITB2203Application.Model;
+using It_disain.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace ITB2203Application.Controllers;
+namespace It_disain.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

@@ -1,4 +1,4 @@
-namespace ITB2203Application.Model;
+namespace It_disain.Model;
 
 public class Test
 {
