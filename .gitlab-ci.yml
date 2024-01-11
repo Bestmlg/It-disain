@@ -1,0 +1,21 @@
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+stages:
+  - test
+test:
+  image: itb2203-kt:1
+  only:
+    - main
+    - master
+  before_script:
+    - cd ITB2203Application/
+    - dotnet restore
+  script:
+    - nohup dotnet run &
+    - /etc/wait-for.sh -t 60 localhost:5000
+    - newman run ../newman/test.postman_collection.json -e ../newman/test.postman_environment.json
+  stage: test
+  tags:
+    - itb2203-kt
