@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace It-disain.Model
+namespace It_disain.Model
 {
     public class Employee
     {
