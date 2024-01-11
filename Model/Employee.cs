@@ -9,11 +9,11 @@ namespace It_disain.Model
     public class Employee
     {
         [Key]
-        public int EmployeeId { get; set; }
-        public string Name { get; set; }
-        public string Position { get; set; }
-        public string Department { get; set; }
-        public string ContactDetails { get; set; }
+        public int EmployeeId { get; init; }
+        public string Name { get; init; }
+        public string Position { get; init; }
+        public string Department { get; init; }
+        public string ContactDetails { get; init; }
         // Seosed teiste klassidega vastavalt vajadusele
     }
 }

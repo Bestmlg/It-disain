@@ -14,6 +14,7 @@ namespace It_disain.Model
     public string Location { get; set; }
     public string MaintenanceDates { get; set; } // See võiks olla kuupäevade list või muu struktuur
     public string Status { get; set; }
+    public List<Shipment> Shipments{get;set;}
 }
 
 }
