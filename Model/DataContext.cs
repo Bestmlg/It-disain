@@ -7,12 +7,12 @@ public class DataContext : DbContext
     public DataContext(DbContextOptions options) : base(options)
     { }
 
-    public DbSet<Test> Tests {get;set;}
-    public DbSet<Vehicle> Vehicles { get; set; }
-    public DbSet<Employee> Employees { get; set; }
-    public DbSet<InventoryItem> InventoryItems { get; set; }
-    public DbSet<Warehouse> Warehouses { get; set; }
-    public DbSet<Shipment> Shipments { get; set; }
+    public virtual DbSet<Test> Tests {get;set;}
+    public virtual DbSet<Vehicle> Vehicles { get; set; }
+    public virtual DbSet<Employee> Employees { get; set; }
+    public virtual DbSet<InventoryItem> InventoryItems { get; set; }
+    public virtual DbSet<Warehouse> Warehouses { get; set; }
+    public virtual DbSet<Shipment> Shipments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
