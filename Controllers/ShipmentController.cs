@@ -1,49 +1,129 @@
 using It_disain.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-[Route("api/[controller]")]
-[ApiController]
-public class ShipmentController : ControllerBase
+namespace It_disain.Controllers
 {
-    // GET: api/Shipment
-    [HttpGet]
-    public ActionResult<IEnumerable<Shipment>> GetShipments()
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ShipmentController : ControllerBase
     {
-        // Siin võiks olla kood, mis pärib kõik saadetised andmebaasist
-        return new List<Shipment>(); // Tegelikult peaks siin tagastama andmebaasi päringu tulemused
-    }
+        private readonly DataContext _context;
 
-    // GET: api/Shipment/5
-    [HttpGet("{id}")]
-    public ActionResult<Shipment> GetShipment(int id)
-    {
-        // Siin võiks olla kood, mis pärib konkreetse saadetise andmebaasist
-        return new Shipment(); // Tegelikult peaks siin tagastama konkreetse saadetise andmebaasist
-    }
+        public ShipmentController(DataContext context)
+        {
+            _context = context;
+        }
 
-    // POST: api/Shipment
-    [HttpPost]
-    public IActionResult CreateShipment(Shipment shipment)
-    {
-        // Siin võiks olla kood, mis lisab uue saadetise andmebaasi
-        return CreatedAtAction("GetShipment", new { id = shipment.ShipmentId }, shipment);
-    }
+        // GET: api/Shipment
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Shipment>>> GetShipments()
+        {
+            return await _context.Shipments
+                .Include(s => s.Vehicle)
+                .Include(s => s.InventoryItems)
+                .ToListAsync();
+        }
 
-    // PUT: api/Shipment/5
-    [HttpPut("{id}")]
-    public IActionResult UpdateShipment(int id, Shipment shipment)
-    {
-        // Siin võiks olla kood, mis uuendab saadetist andmebaasis
-        return NoContent();
-    }
+        // GET: api/Shipment/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Shipment>> GetShipment(int id)
+        {
+            var shipment = await _context.Shipments
+                .Include(s => s.Vehicle)
+                .Include(s => s.InventoryItems)
+                .FirstOrDefaultAsync(s => s.ShipmentId == id);
 
-    // DELETE: api/Shipment/5
-    [HttpDelete("{id}")]
-    public IActionResult DeleteShipment(int id)
-    {
-        // Siin võiks olla kood, mis kustutab saadetise andmebaasist
-        return NoContent();
+            if (shipment == null)
+            {
+                return NotFound();
+            }
+
+            return shipment;
+        }
+
+        // POST: api/Shipment
+        [HttpPost]
+        public async Task<ActionResult<Shipment>> PostShipment(Shipment shipment)
+        {
+            if (shipment == null || string.IsNullOrWhiteSpace(shipment.Destination) || string.IsNullOrWhiteSpace(shipment.Origin))
+            {
+                return BadRequest("Invalid shipment data.");
+            }
+
+            _context.Shipments.Add(shipment);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log the exception details (ex)
+                return StatusCode(500, "A problem occurred while saving the shipment.");
+            }
+
+            return CreatedAtAction("GetShipment", new { id = shipment.ShipmentId }, shipment);
+        }
+
+
+        // PUT: api/Shipment/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutShipment(int id, Shipment shipment)
+        {
+            if (id != shipment.ShipmentId)
+            {
+                return BadRequest("Shipment ID mismatch.");
+            }
+
+            if (string.IsNullOrWhiteSpace(shipment.Destination) || string.IsNullOrWhiteSpace(shipment.Origin))
+            {
+                return BadRequest("Invalid shipment data.");
+            }
+
+            _context.Entry(shipment).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ShipmentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
+        // DELETE: api/Shipment/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteShipment(int id)
+        {
+            var shipment = await _context.Shipments.FindAsync(id);
+            if (shipment == null)
+            {
+                return NotFound();
+            }
+
+            _context.Shipments.Remove(shipment);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ShipmentExists(int id)
+        {
+            return _context.Shipments.Any(e => e.ShipmentId == id);
+        }
     }
 }

@@ -41,11 +41,25 @@ public class VehicleController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Vehicle>> CreateVehicle(Vehicle vehicle)
     {
+        if (vehicle == null || string.IsNullOrWhiteSpace(vehicle.Type))
+        {
+            return BadRequest("Invalid vehicle data.");
+        }
+
         _context.Vehicles.Add(vehicle);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            // Log the exception details (ex)
+            return StatusCode(500, "A problem occurred while saving the vehicle.");
+        }
 
         return CreatedAtAction(nameof(GetVehicle), new { id = vehicle.VehicleId }, vehicle);
     }
+
 
     // PUT: api/Vehicle/5
     [HttpPut("{id}")]
@@ -53,7 +67,12 @@ public class VehicleController : ControllerBase
     {
         if (id != vehicle.VehicleId)
         {
-            return BadRequest();
+            return BadRequest("Vehicle ID mismatch.");
+        }
+
+        if (string.IsNullOrWhiteSpace(vehicle.Type))
+        {
+            return BadRequest("Invalid vehicle data.");
         }
 
         _context.Entry(vehicle).State = EntityState.Modified;
@@ -76,6 +95,7 @@ public class VehicleController : ControllerBase
 
         return NoContent();
     }
+
 
     // DELETE: api/Vehicle/5
     [HttpDelete("{id}")]

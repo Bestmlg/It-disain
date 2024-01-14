@@ -1,49 +1,115 @@
 using It_disain.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-[Route("api/[controller]")]
-[ApiController]
-public class EmployeeController : ControllerBase
+namespace It_disain.Controllers
 {
-    // GET: api/Employee
-    [HttpGet]
-    public ActionResult<IEnumerable<Employee>> GetEmployees()
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EmployeeController : ControllerBase
     {
-        // Kood andmebaasist kõigi töötajate pärimiseks
-        return new List<Employee>();
-    }
+        private readonly DataContext _context;
 
-    // GET: api/Employee/5
-    [HttpGet("{id}")]
-    public ActionResult<Employee> GetEmployee(int id)
-    {
-        // Kood konkreetse töötaja pärimiseks
-        return new Employee();
-    }
+        public EmployeeController(DataContext context)
+        {
+            _context = context;
+        }
 
-    // POST: api/Employee
-    [HttpPost]
-    public IActionResult CreateEmployee([FromBody] Employee employee)
-    {
-        // Kood uue töötaja lisamiseks andmebaasi
-        return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
-    }
+        // GET: api/Employee
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
+        {
+            return await _context.Employees.ToListAsync();
+        }
 
-    // PUT: api/Employee/5
-    [HttpPut("{id}")]
-    public IActionResult UpdateEmployee(int id, [FromBody] Employee employee)
-    {
-        // Kood olemasoleva töötaja uuendamiseks
-        return NoContent();
-    }
+        // GET: api/Employee/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Employee>> GetEmployee(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
 
-    // DELETE: api/Employee/5
-    [HttpDelete("{id}")]
-    public IActionResult DeleteEmployee(int id)
-    {
-        // Kood töötaja kustutamiseks andmebaasist
-        return NoContent();
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return employee;
+        }
+
+        // POST: api/Employee
+        [HttpPost]
+        public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
+        {
+            if (employee == null || string.IsNullOrWhiteSpace(employee.Name) || string.IsNullOrWhiteSpace(employee.Position))
+            {
+                return BadRequest("Invalid employee data.");
+            }
+
+            _context.Employees.Add(employee);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
+        }
+
+        // PUT: api/Employee/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        {
+            if (id != employee.EmployeeId)
+            {
+                return BadRequest("Employee ID mismatch.");
+            }
+
+            if (string.IsNullOrWhiteSpace(employee.Name) || string.IsNullOrWhiteSpace(employee.Position))
+            {
+                return BadRequest("Invalid employee data.");
+            }
+
+            _context.Entry(employee).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EmployeeExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+
+        // DELETE: api/Employee/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool EmployeeExists(int id)
+        {
+            return _context.Employees.Any(e => e.EmployeeId == id);
+        }
     }
 }
