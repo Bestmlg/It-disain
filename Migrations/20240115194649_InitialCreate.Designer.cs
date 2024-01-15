@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Itdisain.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240114202617_InitialCreate")]
+    [Migration("20240115194649_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -62,7 +62,8 @@ namespace Itdisain.Migrations
 
                     b.Property<string>("Position")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Positsioon");
 
                     b.HasKey("EmployeeId");
 
@@ -96,7 +97,8 @@ namespace Itdisain.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("Weight")
-                        .HasColumnType("float");
+                        .HasColumnType("float")
+                        .HasColumnName("Kaal");
 
                     b.HasKey("ItemId");
 

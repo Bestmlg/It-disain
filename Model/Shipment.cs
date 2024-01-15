@@ -16,7 +16,7 @@ namespace It_disain.Model
         public string Origin { get; set; }
         public string Status { get; set; }
         public int VehicleId { get; set; }
-        public Vehicle Vehicle { get; set; }  // Seose loomiseks Vehicle klassiga
-        public List<InventoryItem> InventoryItems { get; set; } // Mitmest-mitmesse seos InventoryItem klassiga
+        public Vehicle Vehicle { get; set; }  
+        public List<InventoryItem> InventoryItems { get; set; } 
     }
 }

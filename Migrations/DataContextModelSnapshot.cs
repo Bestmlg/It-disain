@@ -59,7 +59,8 @@ namespace Itdisain.Migrations
 
                     b.Property<string>("Position")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Positsioon");
 
                     b.HasKey("EmployeeId");
 
@@ -93,7 +94,8 @@ namespace Itdisain.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("Weight")
-                        .HasColumnType("float");
+                        .HasColumnType("float")
+                        .HasColumnName("Kaal");
 
                     b.HasKey("ItemId");
 
