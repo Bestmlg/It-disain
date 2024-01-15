@@ -16,17 +16,10 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configure the one-to-many relationship between Shipment and Vehicle
+        
         modelBuilder.Entity<Shipment>()
             .HasOne<Vehicle>(s => s.Vehicle)
             .WithMany(v => v.Shipments)
             .HasForeignKey(s => s.VehicleId);
-
-
-
-        // Configure the many-to-many relationship between Shipment and Employee
-        // Assume there is a join table for this relationship
-        
-        // Other relationships...
     }
 }

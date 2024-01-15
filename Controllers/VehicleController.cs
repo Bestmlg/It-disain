@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using It_disain.Model; 
-using Microsoft.EntityFrameworkCore; // Vahetage see oma andmebaasi konteksti nimeruumi vastu, kui kasutate EF Core'i
+using Microsoft.EntityFrameworkCore; 
 
 [Route("api/[controller]")]
 [ApiController]
@@ -53,7 +53,7 @@ public class VehicleController : ControllerBase
         }
         catch (DbUpdateException ex)
         {
-            // Log the exception details (ex)
+            
             return StatusCode(500, "A problem occurred while saving the vehicle.");
         }
 

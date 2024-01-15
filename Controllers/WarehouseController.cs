@@ -59,7 +59,7 @@ namespace It_disain.Controllers
             }
             catch (DbUpdateException ex)
             {
-                // Log the exception details (ex)
+                
                 return StatusCode(500, "A problem occurred while saving the warehouse.");
             }
 
